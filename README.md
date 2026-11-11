@@ -1,2 +1,141 @@
 # peopledesk-hr
 Personal HR Practice Portal a
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PeopleDesk HR</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#202b3c}
+header{background:#fff;padding:18px 25px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e5eaf1}
+.logo{font-size:22px;font-weight:bold;color:#2463eb}
+.layout{display:flex;min-height:calc(100vh - 65px)}
+nav{width:220px;background:#fff;padding:20px 12px;border-right:1px solid #e5eaf1}
+nav button{display:block;width:100%;padding:13px;text-align:left;border:0;background:none;border-radius:8px;margin:4px 0;cursor:pointer;color:#46536a;font-size:15px}
+nav button.active,nav button:hover{background:#eaf1ff;color:#2463eb}
+main{padding:28px;flex:1;min-width:0}
+h1{margin-top:0;font-size:26px}
+.muted{color:#758197}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin:22px 0}
+.card{background:#fff;border:1px solid #e6ebf2;border-radius:12px;padding:20px}
+.card small{color:#758197}
+.number{font-size:28px;font-weight:bold;margin-top:12px}
+.panel{background:#fff;border:1px solid #e6ebf2;border-radius:12px;padding:20px;margin-top:18px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:450px}
+th,td{text-align:left;padding:13px;border-bottom:1px solid #edf0f5;font-size:14px}
+th{color:#758197}
+.action{background:#2463eb;color:white;border:0;padding:10px 15px;border-radius:7px;cursor:pointer}
+input{padding:10px;border:1px solid #d7deea;border-radius:7px;margin:5px;max-width:100%}
+.section{display:none}.section.active{display:block}
+@media(max-width:650px){.layout{display:block}nav{width:100%;display:flex;overflow-x:auto;padding:8px}nav button{white-space:nowrap;width:auto}main{padding:18px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">PeopleDesk HR</div>
+  <span class="muted">HR Practice Portal · DEMO</span>
+</header>
+<div class="layout">
+<nav>
+  <button class="active" onclick="show('dashboard',this)">Dashboard</button>
+  <button onclick="show('employees',this)">Employees</button>
+  <button onclick="show('attendance',this)">Attendance</button>
+  <button onclick="show('leave',this)">Leave Management</button>
+</nav>
+<main>
+<section id="dashboard" class="section active">
+  <h1>HR Dashboard</h1>
+  <p class="muted">Welcome to your PeopleDesk HR practice workspace.</p>
+  <div class="cards">
+    <div class="card"><small>Total Employees</small><div class="number" id="total">3</div></div>
+    <div class="card"><small>Present Today</small><div class="number">2</div></div>
+    <div class="card"><small>Leave Requests</small><div class="number" id="leaveCount">1</div></div>
+  </div>
+  <div class="panel"><h3>Getting started</h3><p>Use the menu to practise employee records, attendance and leave management.</p></div>
+</section>
+<section id="employees" class="section">
+  <h1>Employees</h1>
+  <p class="muted">Manage your demo employee directory.</p>
+  <div class="panel">
+    <input id="empName" placeholder="Employee name">
+    <input id="empRole" placeholder="Job title">
+    <button class="action" onclick="addEmployee()">Add Employee</button>
+  </div>
+  <div class="panel">
+    <table><thead><tr><th>Employee ID</th><th>Name</th><th>Job Title</th></tr></thead>
+    <tbody id="employeeRows">
+      <tr><td>PD001</td><td>Ananya Rao</td><td>HR Executive</td></tr>
+      <tr><td>PD002</td><td>Rahul Kumar</td><td>Software Engineer</td></tr>
+      <tr><td>PD003</td><td>Priya Sharma</td><td>Accountant</td></tr>
+    </tbody></table>
+  </div>
+</section>
+<section id="attendance" class="section">
+  <h1>Attendance</h1>
+  <p class="muted">Demo attendance register.</p>
+  <div class="panel">
+    <table><thead><tr><th>Employee</th><th>Date</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Ananya Rao</td><td>Today</td><td>Present</td></tr>
+      <tr><td>Rahul Kumar</td><td>Today</td><td>Present</td></tr>
+      <tr><td>Priya Sharma</td><td>Today</td><td>Absent</td></tr>
+    </tbody></table>
+  </div>
+</section>
+<section id="leave" class="section">
+  <h1>Leave Management</h1>
+  <p class="muted">Create and review sample leave requests.</p>
+  <div class="panel">
+    <input id="leaveName" placeholder="Employee name">
+    <input id="leaveReason" placeholder="Leave reason">
+    <button class="action" onclick="addLeave()">Submit Request</button>
+  </div>
+  <div class="panel">
+    <table><thead><tr><th>Employee</th><th>Reason</th><th>Status</th></tr></thead>
+    <tbody id="leaveRows"><tr><td>Ananya Rao</td><td>Personal</td><td>Pending</td></tr></tbody></table>
+  </div>
+</section>
+</main>
+</div>
+<script>
+let employeeCount=3;
+function show(id,button){
+ document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+ button.classList.add('active');
+}
+function addEmployee(){
+ const name=document.getElementById('empName').value.trim();
+ const role=document.getElementById('empRole').value.trim();
+ if(!name||!role){alert('Enter employee name and job title');return;}
+ employeeCount++;
+ const row=document.createElement('tr');
+ [ 'PD'+String(employeeCount).padStart(3,'0'),name,role ].forEach(value=>{
+  const cell=document.createElement('td');cell.textContent=value;row.appendChild(cell);
+ });
+ document.getElementById('employeeRows').appendChild(row);
+ document.getElementById('total').textContent=employeeCount;
+ document.getElementById('empName').value='';
+ document.getElementById('empRole').value='';
+}
+function addLeave(){
+ const name=document.getElementById('leaveName').value.trim();
+ const reason=document.getElementById('leaveReason').value.trim();
+ if(!name||!reason){alert('Enter employee name and leave reason');return;}
+ const row=document.createElement('tr');
+ [name,reason,'Pending'].forEach(value=>{
+  const cell=document.createElement('td');cell.textContent=value;row.appendChild(cell);
+ });
+ document.getElementById('leaveRows').appendChild(row);
+ document.getElementById('leaveCount').textContent=
+  document.getElementById('leaveRows').rows.length;
+ document.getElementById('leaveName').value='';
+ document.getElementById('leaveReason').value='';
+}
+</script>
+</body>
+</html>
